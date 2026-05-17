@@ -156,6 +156,7 @@ function App() {
       const next = new Date(date);
       if (view === 'weekly') next.setDate(next.getDate() + direction * 7);
       if (view === 'monthly') next.setMonth(next.getMonth() + direction);
+      if (view === 'quarterly') next.setMonth(next.getMonth() + direction * 3);
       return next;
     });
   };
@@ -190,7 +191,13 @@ function App() {
         <header className="topbar">
           <div>
             <p className="eyebrow">Cozy content journal</p>
-            <h2>{view === 'weekly' ? formatRange(weekStart) : anchorDate.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}</h2>
+            <h2>
+              {view === 'weekly' && formatRange(weekStart)}
+              {view === 'monthly' && anchorDate.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+              {view === 'quarterly' && (
+                `${anchorDate.toLocaleDateString('en-AU', { month: 'long' })} - ${new Date(anchorDate.getFullYear(), anchorDate.getMonth() + 2, 1).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}`
+              )}
+            </h2>
           </div>
 
           <div className="toolbar">
@@ -202,6 +209,10 @@ function App() {
               <button className={view === 'monthly' ? 'active' : ''} onClick={() => setView('monthly')} type="button">
                 <CalendarDays size={18} aria-hidden="true" />
                 Month
+              </button>
+              <button className={view === 'quarterly' ? 'active' : ''} onClick={() => setView('quarterly')} type="button">
+                <CalendarDays size={18} aria-hidden="true" />
+                Quarter
               </button>
             </div>
 
@@ -221,7 +232,7 @@ function App() {
 
         <BalanceBar bucketCounts={bucketCounts} maxBucketCount={maxBucketCount} />
 
-        {view === 'weekly' ? (
+        {view === 'weekly' && (
           <WeeklyView
             weekKeys={weekKeys}
             slots={planner.slots}
@@ -230,8 +241,19 @@ function App() {
             onAddKeyword={addKeyword}
             onUpdateSlot={updateSlot}
           />
-        ) : (
+        )}
+        {view === 'monthly' && (
           <MonthlyView
+            anchorDate={anchorDate}
+            slots={planner.slots}
+            keywords={planner.keywords}
+            onAddSlot={addSlot}
+            onAddKeyword={addKeyword}
+            onUpdateSlot={updateSlot}
+          />
+        )}
+        {view === 'quarterly' && (
+          <QuarterlyView
             anchorDate={anchorDate}
             slots={planner.slots}
             keywords={planner.keywords}
@@ -322,6 +344,37 @@ function MonthlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onU
             onUpdateSlot={onUpdateSlot}
             compact
             muted={date.getMonth() !== currentMonth}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function QuarterlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot }) {
+  const start = startOfWeek(startOfMonth(anchorDate));
+  const days = Array.from({ length: 91 }, (_, index) => addDays(start, index)); // 13 weeks
+
+  return (
+    <div className="month-grid">
+      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+        <div className="month-weekday" key={day}>
+          {day}
+        </div>
+      ))}
+      {days.map((date) => {
+        const dateKey = toKey(date);
+        return (
+          <DayColumn
+            key={dateKey}
+            dateKey={dateKey}
+            slots={slots[dateKey] ?? []}
+            keywords={keywords}
+            onAddSlot={onAddSlot}
+            onAddKeyword={onAddKeyword}
+            onUpdateSlot={onUpdateSlot}
+            compact
+            muted={false}
           />
         );
       })}
