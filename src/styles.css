@@ -325,6 +325,12 @@ h3 {
   box-shadow: inset 0 0 0 1px rgba(139, 94, 106, 0.08);
 }
 
+.day-card.month-alt-0 { background: rgba(255, 248, 245, 0.72); } /* default cream */
+.day-card.month-alt-1 { background: rgba(245, 238, 232, 0.72); } /* taupe */
+.day-card.month-alt-2 { background: rgba(238, 242, 238, 0.72); } /* sage */
+.day-card.month-alt-3 { background: rgba(248, 240, 242, 0.72); } /* rose */
+
+
 .day-card.compact {
   min-height: 13rem;
   padding: 0.55rem;

@@ -108,7 +108,7 @@ function App() {
 
   const weekStart = useMemo(() => startOfWeek(anchorDate), [anchorDate]);
   const weekKeys = useMemo(
-    () => Array.from({ length: 7 }, (_, index) => toKey(addDays(weekStart, index))),
+    () => Array.from({ length: 28 }, (_, index) => toKey(addDays(weekStart, index))),
     [weekStart],
   );
 
@@ -154,7 +154,7 @@ function App() {
   const movePeriod = (direction) => {
     setAnchorDate((date) => {
       const next = new Date(date);
-      if (view === 'weekly') next.setDate(next.getDate() + direction * 7);
+      if (view === 'weekly') next.setDate(next.getDate() + direction * 28);
       if (view === 'monthly') next.setMonth(next.getMonth() + direction);
       if (view === 'quarterly') next.setMonth(next.getMonth() + direction * 3);
       return next;
@@ -192,7 +192,7 @@ function App() {
           <div>
             <p className="eyebrow">Cozy content journal</p>
             <h2>
-              {view === 'weekly' && formatRange(weekStart)}
+              {view === 'weekly' && `${weekStart.toLocaleDateString('en-AU', { month: 'short', day: 'numeric' })} - ${addDays(weekStart, 27).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', year: 'numeric' })}`}
               {view === 'monthly' && anchorDate.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
               {view === 'quarterly' && (
                 `${anchorDate.toLocaleDateString('en-AU', { month: 'long' })} - ${new Date(anchorDate.getFullYear(), anchorDate.getMonth() + 2, 1).toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}`
@@ -384,13 +384,14 @@ function QuarterlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, o
 
 function DayColumn({ dateKey, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot, compact, muted = false }) {
   const date = parseKey(dateKey);
+  const monthAltClass = `month-alt-${date.getMonth() % 4}`;
 
   return (
-    <article className={`day-card ${compact ? 'compact' : ''} ${muted ? 'muted' : ''}`}>
+    <article className={`day-card ${compact ? 'compact' : ''} ${muted ? 'muted' : ''} ${monthAltClass}`}>
       <header className="day-header">
         <div>
           <p>{date.toLocaleDateString('en-AU', { weekday: compact ? 'short' : 'long' })}</p>
-          <h3>{date.toLocaleDateString('en-AU', { day: 'numeric', month: compact ? undefined : 'short' })}</h3>
+          <h3>{date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}</h3>
         </div>
         <button onClick={() => onAddSlot(dateKey)} type="button" aria-label={`Add post on ${dateKey}`}>
           <Plus size={17} aria-hidden="true" />
