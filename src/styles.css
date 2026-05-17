@@ -247,23 +247,7 @@ h3 {
   padding-inline: 0.7rem;
 }
 
-.balance-panel {
-  margin-bottom: 1rem;
-  border-radius: 24px;
-  background: rgba(255, 248, 245, 0.74);
-  padding: 1rem;
-}
 
-.balance-heading {
-  margin-bottom: 0.9rem;
-  color: #8b5e6a;
-}
-
-.balance-bars {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.75rem;
-}
 
 .balance-item {
   min-width: 0;

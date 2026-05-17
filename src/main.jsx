@@ -172,18 +172,33 @@ function App() {
           </div>
         </div>
 
-        <section className="bucket-list" aria-label="Current week bucket counts">
-          <div className="section-title">
-            <span>This week</span>
+        <section className="bucket-list" aria-label="Bucket Balance">
+          <div className="section-title" style={{ marginBottom: '1rem' }}>
+            <span>Bucket Balance</span>
             <strong>{weekSlots.length} posts</strong>
           </div>
-          {bucketCounts.map((bucket) => (
-            <div className="bucket-row" key={bucket.name}>
-              <span className="bucket-dot" style={{ backgroundColor: bucket.color }} />
-              <span>{bucket.name}</span>
-              <strong>{bucket.count}</strong>
-            </div>
-          ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            {bucketCounts.map((bucket) => (
+              <div className="balance-item" key={bucket.name}>
+                <div className="balance-label">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span className="bucket-dot" style={{ backgroundColor: bucket.color }} />
+                    <span>{bucket.name}</span>
+                  </div>
+                  <strong>{bucket.count}</strong>
+                </div>
+                <div className="balance-track">
+                  <span
+                    className="balance-fill"
+                    style={{
+                      width: `${Math.max(8, (bucket.count / maxBucketCount) * 100)}%`,
+                      backgroundColor: bucket.color,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </aside>
 
@@ -230,8 +245,6 @@ function App() {
           </div>
         </header>
 
-        <BalanceBar bucketCounts={bucketCounts} maxBucketCount={maxBucketCount} />
-
         {view === 'weekly' && (
           <WeeklyView
             weekKeys={weekKeys}
@@ -267,39 +280,7 @@ function App() {
   );
 }
 
-function BalanceBar({ bucketCounts, maxBucketCount }) {
-  return (
-    <section className="balance-panel" aria-label="Weekly bucket balance">
-      <div className="balance-heading">
-        <div>
-          <p className="eyebrow">Bucket balance</p>
-          <h3>Keep the feed feeling layered</h3>
-        </div>
-        <LayoutGrid size={22} aria-hidden="true" />
-      </div>
 
-      <div className="balance-bars">
-        {bucketCounts.map((bucket) => (
-          <div className="balance-item" key={bucket.name}>
-            <div className="balance-label">
-              <span>{bucket.name}</span>
-              <strong>{bucket.count}</strong>
-            </div>
-            <div className="balance-track">
-              <span
-                className="balance-fill"
-                style={{
-                  width: `${Math.max(8, (bucket.count / maxBucketCount) * 100)}%`,
-                  backgroundColor: bucket.color,
-                }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
 
 function WeeklyView({ weekKeys, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot }) {
   return (
