@@ -372,13 +372,26 @@ h3 {
   gap: 0.65rem;
 }
 
-.empty-note {
+.empty-add-btn {
+  width: 100%;
   margin: 0;
-  border: 1px dashed rgba(139, 94, 106, 0.18);
+  border: 1px dashed rgba(139, 94, 106, 0.25);
   border-radius: 18px;
+  background: transparent;
   color: #9f737e;
   padding: 0.9rem;
-  text-align: center;
+  min-height: 4.5rem;
+  box-shadow: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.empty-add-btn:hover {
+  background: rgba(139, 94, 106, 0.05);
+  border-color: rgba(139, 94, 106, 0.4);
+  color: #8b5e6a;
 }
 
 .post-slot {

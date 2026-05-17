@@ -399,7 +399,11 @@ function DayColumn({ dateKey, slots, keywords, onAddSlot, onAddKeyword, onUpdate
       </header>
 
       <div className="slot-stack">
-        {slots.length === 0 && <p className="empty-note">Open space for an idea.</p>}
+        {slots.length === 0 && (
+          <button className="empty-add-btn" onClick={() => onAddSlot(dateKey)} type="button" aria-label={`Add post on ${dateKey}`}>
+            <Plus size={22} aria-hidden="true" />
+          </button>
+        )}
         {slots.map((slot) => (
           <PostSlot
             key={slot.id}
