@@ -378,6 +378,19 @@ h3 {
   color: #8b5e6a;
 }
 
+.delete-slot-btn {
+  padding: 0 0.4rem;
+  min-height: 2.35rem;
+  background: transparent;
+  color: #c4909a;
+  box-shadow: none;
+}
+
+.delete-slot-btn:hover {
+  background: rgba(139, 94, 106, 0.1);
+  color: #8b5e6a;
+}
+
 .post-slot {
   display: grid;
   gap: 0.55rem;

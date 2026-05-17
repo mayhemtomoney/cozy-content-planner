@@ -9,6 +9,7 @@ import {
   ListChecks,
   Plus,
   Sparkles,
+  Trash2,
 } from 'lucide-react';
 import './styles.css';
 
@@ -141,6 +142,16 @@ function App() {
     }));
   };
 
+  const deleteSlot = (dateKey, slotId) => {
+    setPlanner((current) => ({
+      ...current,
+      slots: {
+        ...current.slots,
+        [dateKey]: (current.slots[dateKey] ?? []).filter((slot) => slot.id !== slotId),
+      },
+    }));
+  };
+
   const addKeyword = (keyword) => {
     const normalized = keyword.trim().toUpperCase();
     if (!normalized) return;
@@ -253,6 +264,7 @@ function App() {
             onAddSlot={addSlot}
             onAddKeyword={addKeyword}
             onUpdateSlot={updateSlot}
+            onDeleteSlot={deleteSlot}
           />
         )}
         {view === 'monthly' && (
@@ -263,6 +275,7 @@ function App() {
             onAddSlot={addSlot}
             onAddKeyword={addKeyword}
             onUpdateSlot={updateSlot}
+            onDeleteSlot={deleteSlot}
           />
         )}
         {view === 'quarterly' && (
@@ -273,6 +286,7 @@ function App() {
             onAddSlot={addSlot}
             onAddKeyword={addKeyword}
             onUpdateSlot={updateSlot}
+            onDeleteSlot={deleteSlot}
           />
         )}
       </section>
@@ -282,7 +296,7 @@ function App() {
 
 
 
-function WeeklyView({ weekKeys, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot }) {
+function WeeklyView({ weekKeys, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot, onDeleteSlot }) {
   return (
     <div className="week-grid">
       {weekKeys.map((dateKey) => (
@@ -294,6 +308,7 @@ function WeeklyView({ weekKeys, slots, keywords, onAddSlot, onAddKeyword, onUpda
           onAddSlot={onAddSlot}
           onAddKeyword={onAddKeyword}
           onUpdateSlot={onUpdateSlot}
+          onDeleteSlot={onDeleteSlot}
           compact={false}
         />
       ))}
@@ -301,7 +316,7 @@ function WeeklyView({ weekKeys, slots, keywords, onAddSlot, onAddKeyword, onUpda
   );
 }
 
-function MonthlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot }) {
+function MonthlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot, onDeleteSlot }) {
   const days = monthGrid(anchorDate);
   const currentMonth = anchorDate.getMonth();
 
@@ -323,6 +338,7 @@ function MonthlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onU
             onAddSlot={onAddSlot}
             onAddKeyword={onAddKeyword}
             onUpdateSlot={onUpdateSlot}
+            onDeleteSlot={onDeleteSlot}
             compact
             muted={date.getMonth() !== currentMonth}
           />
@@ -332,7 +348,7 @@ function MonthlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onU
   );
 }
 
-function QuarterlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot }) {
+function QuarterlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot, onDeleteSlot }) {
   const start = startOfWeek(startOfMonth(anchorDate));
   const days = Array.from({ length: 91 }, (_, index) => addDays(start, index)); // 13 weeks
 
@@ -354,6 +370,7 @@ function QuarterlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, o
             onAddSlot={onAddSlot}
             onAddKeyword={onAddKeyword}
             onUpdateSlot={onUpdateSlot}
+            onDeleteSlot={onDeleteSlot}
             compact
             muted={false}
           />
@@ -363,7 +380,7 @@ function QuarterlyView({ anchorDate, slots, keywords, onAddSlot, onAddKeyword, o
   );
 }
 
-function DayColumn({ dateKey, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot, compact, muted = false }) {
+function DayColumn({ dateKey, slots, keywords, onAddSlot, onAddKeyword, onUpdateSlot, onDeleteSlot, compact, muted = false }) {
   const date = parseKey(dateKey);
   const monthAltClass = `month-alt-${date.getMonth() % 4}`;
 
@@ -393,6 +410,7 @@ function DayColumn({ dateKey, slots, keywords, onAddSlot, onAddKeyword, onUpdate
             keywords={keywords}
             onAddKeyword={onAddKeyword}
             onUpdateSlot={onUpdateSlot}
+            onDeleteSlot={onDeleteSlot}
             compact={compact}
           />
         ))}
@@ -401,7 +419,7 @@ function DayColumn({ dateKey, slots, keywords, onAddSlot, onAddKeyword, onUpdate
   );
 }
 
-function PostSlot({ dateKey, slot, keywords, onAddKeyword, onUpdateSlot, compact }) {
+function PostSlot({ dateKey, slot, keywords, onAddKeyword, onUpdateSlot, onDeleteSlot, compact }) {
   const bucket = BUCKETS.find((item) => item.name === slot.bucket) ?? BUCKETS[0];
 
   const handleImage = (event) => {
@@ -429,11 +447,21 @@ function PostSlot({ dateKey, slot, keywords, onAddKeyword, onUpdateSlot, compact
   return (
     <div className="post-slot" style={{ '--bucket': bucket.color, '--bucket-soft': bucket.accent }}>
       <div className="slot-topline">
-        <select value={slot.bucket} onChange={(event) => onUpdateSlot(dateKey, slot.id, { bucket: event.target.value })}>
-          {BUCKETS.map((item) => (
-            <option key={item.name}>{item.name}</option>
-          ))}
-        </select>
+        <div style={{ display: 'flex', gap: '0.5rem', width: '100%', alignItems: 'center' }}>
+          <select style={{ flex: 1 }} value={slot.bucket} onChange={(event) => onUpdateSlot(dateKey, slot.id, { bucket: event.target.value })}>
+            {BUCKETS.map((item) => (
+              <option key={item.name}>{item.name}</option>
+            ))}
+          </select>
+          <button 
+            className="delete-slot-btn"
+            onClick={() => onDeleteSlot(dateKey, slot.id)} 
+            type="button" 
+            aria-label="Delete post"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
         <select value={slot.status} onChange={(event) => onUpdateSlot(dateKey, slot.id, { status: event.target.value })}>
           {STATUSES.map((status) => (
             <option key={status}>{status}</option>
