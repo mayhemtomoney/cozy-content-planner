@@ -127,8 +127,9 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(1.55rem, 2vw, 2.05rem);
-  line-height: 1.02;
+  font-size: clamp(1.1rem, 1.2vw, 1.35rem);
+  line-height: 1.1;
+  word-break: break-word;
 }
 
 h2 {
